@@ -1,0 +1,14 @@
+GET http://localhost:8080/student
+
+###
+GET http://localhost:8080/WeatherForecast
+
+
+
+
+
+# local
+###
+http://localhost:5022/student
+###
+http://localhost:5022/WeatherForecast
