@@ -7,34 +7,35 @@ on:
   workflow_dispatch: 
 
 jobs:
-  build:
+  build:   # tên job 
     runs-on: self-hosted  # run bằng host tự tạo của toi
     timeout-minutes: 5
     
-    steps:
-      - uses: actions/checkout@v4
+    steps: # các step được thực hiện trong job 'build'
+      - uses: actions/checkout@v4      # step 1 : kéo code từ repo github về runner
         
-      - name: Setup .NET
+      - name: Setup .NET               # step 2 : cài đặt môi trường 
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: '7.x' # Sửa đổi tương ứng với phiên bản .NET của bạn
           include-prerelease: true
           
-      - name: Build
+      - name: Build                    # step 3 : build code 
         run: dotnet build --configuration Release
   
-  # deploy:
-  #   runs-on: self-hosted
-  #   needs: build
-  #   steps:
-  #     - uses: actions/checkout@v3
+  deploy:  # tên job 
+    runs-on: self-hosted
+    needs: build      # cần yêu cầu job build phải chạy xong thì mới thực hiện deploy 
 
-  #     - name: Build and push Docker image
-  #       uses: mr-smithers-excellent/docker-build-push@v6
-  #       with:
-  #         image: viethungdev23/backend-dotnet8
-  #         tags: latest
-  #         registry: docker.io
-  #         dockerfile: ./src/PerfectBreakfast.API/Dockerfile
-  #         username: ${{ secrets.DOCKER_USERNAME }}
-  #         password: ${{ secrets.DOCKER_PASSWORD }}    
+    steps: # các step được thực hiện trong job 'deploy'
+      - uses: actions/checkout@v3      # step 1 : kéo code từ repo github về runner                   
+
+      - name: Build and push Docker image    # step 2 : build code thành image theo cấu hình bên dưới ròi push lên dockerhub 
+        uses: mr-smithers-excellent/docker-build-push@v6
+        with:
+          image: viethungdev23/dotnet-demo            # image
+          tags: latest                                # image version
+          registry: docker.io                         # registry url 
+          dockerfile: Dockerfile                      # đường dẫn đến Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}    # username dockerhub 
+          password: ${{ secrets.DOCKER_PASSWORD }}    # password 
